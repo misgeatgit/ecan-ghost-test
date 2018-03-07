@@ -1,0 +1,60 @@
+# ################################################################################
+# toy-goaldirected.ghost
+#
+# This rulebase is to test rudimentary goal directed dialogue within Ghost.
+# It uses explicit predicates to set urge levels manually when certain rules
+# have been triggered.
+#
+# Predicates needed:
+#  - ^decrease_urge(goal, value)
+#  - ^increase_urge(goal, value)
+#  - ^urge_below(goal, value)
+#
+#  - ^keep()
+#  - default input for sentence perceived
+#  - default output to TTS
+# ################################################################################
+
+# Common concepts
+concept: ~hi (hi hello "good day" greetings)
+# concept: ~sophia (sophia robot you humanoid)
+concept: ~what (what)
+concept: ~how (how)
+concept: ~good (good ok splendid awesome fantastic)
+concept: ~bad (bad foul crap)
+
+# Introducing ourselves
+# goal: (introduction=1.0) # All following rules satisfy this goal 100%
+
+  s: (~hi ~sophia) Hello Human, I am Sophia. ^decrease_urge(introduction)
+  s: (~what ~sophia) I am a humanoid robot, made by Hanson robotics. ^decrease_urge(introduction)
+
+  s: (~how ~sophia) I am fine, how are you? ^decrease_urge(introduction)
+     a: (~good) Cool! ^increase_urge(tell_joke)
+     a: (~bad) Oh I see. ^increase_urge(goodbye) # We dont wanna talk with unhappy people...
+
+  s: (*) I dont know how to respond, sorry. ^keep()
+
+  s: (^urge_below(introduction)) ^increase_urge(tell_joke)
+
+
+# Telling jokes
+# goal: (tell_joke=1.0)
+
+  s: (*) I'm reading a book about anti-gravity. It's impossible to put down! ^decrease_urge(tell_joke)
+  s: (*) Want to hear a joke about a piece of paper? Never mind... it's tearable. ^decrease_urge(tell_joke)
+  s: (*) Spring is here! I got so excited I wet my plants! ^decrease_urge(tell_joke)
+  s: (*) What's Forrest Gump's password? one forrest one ^decrease_urge(tell_joke)
+  s: (*) A termite walks into a bar and asks, Is the bar tender here? ^decrease_urge(tell_joke)
+
+# Saying Goodbye
+# goal: (goodbye=1.0)
+
+  s: (~good * ~sophia) Pleasure to meet you! ^decrease_urge(goodbye)
+  s: (~bad * ~sophia) I wont be missing you! ^decrease_urge(goodbye)
+  s: (*) Goodbye! ^decrease_urge(goodbye)
+
+
+# Rule satisfying both a joke and saying goodbye
+# goal: (goodbye=1.0, tell_joke=1.0)
+s: (*) Why did the yogurt go to the art exhibit? Because it was cultured. Goodbye! ^decrease_urge(tell_joke1.0) ^decrease_urge(goodbye)

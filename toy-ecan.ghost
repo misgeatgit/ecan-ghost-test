@@ -1,0 +1,14 @@
+# ################################################################################
+# toy-ecan.ghost
+#
+# This rulebase is to test ECAN rule selection based on STI diffusion.
+# Not really meant to be running, but more used for debug information
+#
+# Predicates needed:
+#  - ^keep()
+# ################################################################################
+
+s: (how) Rule A ^keep()
+s: (how are) Rule B ^keep()
+s: (how are you) Rule C ^keep()
+s: (how are you Sophia) Rule D ^keep()
